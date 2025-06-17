@@ -2,33 +2,33 @@
 
 namespace App\Tests;
 
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Domain\User\Entity\User;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class RegistrationControllerTest extends WebTestCase
 {
     private KernelBrowser $client;
-    private EntityManagerInterface $userRepository;
+
+    private EntityRepository $userRepository;
 
     protected function setUp(): void
     {
         $this->client = static::createClient();
 
-        // Ensure we have a clean database
         $container = static::getContainer();
+        $entityManager = $container->get('doctrine')->getManager();
 
-        /** @var EntityManager $em */
-        $em = $container->get('doctrine')->getManager();
-        $this->userRepository = $container->get(EntityManagerInterface::class);
+        $this->userRepository = $entityManager->getRepository(User::class);
 
         foreach ($this->userRepository->findAll() as $user) {
-            $em->remove($user);
+            $entityManager->remove($user);
         }
 
-        $em->flush();
+        $entityManager->flush();
     }
+
 
     public function testRegister(): void
     {
