@@ -20,16 +20,21 @@ final class Version20250617130731 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql(<<<'SQL'
-            ALTER TABLE user ADD roles JSON NOT NULL, CHANGE id id INT AUTO_INCREMENT NOT NULL, CHANGE email email VARCHAR(180) NOT NULL, CHANGE password_hash password VARCHAR(255) NOT NULL
-        SQL);
+        $this->addSql('
+            CREATE TABLE `user` (
+              `id` int NOT NULL AUTO_INCREMENT,
+              `email` varchar(180) COLLATE utf8mb4_unicode_ci NOT NULL,
+              `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+              `roles` json NOT NULL,
+              PRIMARY KEY (`id`),
+              UNIQUE KEY `UNIQ_8D93D649E7927C74` (`email`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+        ');
     }
 
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql(<<<'SQL'
-            ALTER TABLE user DROP roles, CHANGE id id VARCHAR(36) NOT NULL, CHANGE email email VARCHAR(255) NOT NULL, CHANGE password password_hash VARCHAR(255) NOT NULL
-        SQL);
+        $this->addSql('DROP TABLE `user`;');
     }
 }
